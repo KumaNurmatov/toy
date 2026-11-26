@@ -476,8 +476,8 @@ function pauseByUser(){
 ['wheel','touchstart','keydown'].forEach(ev => addEventListener(ev, pauseByUser, {passive:true}));
 
 const music = $('#music'), mute = $('#mute');
-// музыка: по кнопке, громкость плавно растёт 0 → 0.85 за 4 с (Web Audio — на iPhone audio.volume не работает)
-const VOL = 0.85, FADE = 4;
+// музыка: по кнопке, громкость плавно растёт 0 → 0.55 за 4 с (Web Audio — на iPhone audio.volume не работает)
+const VOL = 0.55, FADE = 4;
 let actx = null, gain = null, muted = false;
 function startMusic(){
   try {
@@ -506,7 +506,7 @@ $('#openBtn').addEventListener('click', () => {
   startMusic();
   auto = true; setTimeout(() => go(0), 900);
 });
-$('#replay').addEventListener('click', () => { auto = true; go(0); });
+$('#replay').addEventListener('click', () => { auto = true; if (muted) setMuted(false); startMusic(); go(0); });
 mute.addEventListener('click', () => setMuted(!muted));
 document.addEventListener('visibilitychange', () => { if (document.hidden) music.pause(); else if (auto && !muted) { actx && actx.resume(); music.play().catch(()=>{}); } });
 
