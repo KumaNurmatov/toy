@@ -134,6 +134,17 @@ body.locked{overflow:hidden}
 .mute{position:fixed;right:16px;bottom:16px;z-index:15;width:40px;height:40px;border-radius:50%;border:1px solid rgba(243,230,211,.5);background:rgba(40,4,10,.55);color:var(--on-velvet);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)}
 .mute svg{width:17px;height:17px}
 .hidden{display:none!important}
+/* PDF-режим (?pdf) */
+.pdf-only{display:none}
+body.pdf{background:#4a0b15;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body.pdf .cover,body.pdf .mute,body.pdf .countdown,body.pdf .replay{display:none!important}
+body.pdf .page{width:480px;max-width:480px}
+body.pdf .page::before{display:none}
+body.pdf .reveal{opacity:1;transform:none;transition:none}
+body.pdf .week .on path{stroke-dashoffset:0;transition:none}
+body.pdf .pdf-only{display:inline-flex}
+body.pdf .invite-wrap .silk{margin-bottom:10px}
+
 @media (min-width:520px){.page{box-shadow:0 0 0 1px rgba(201,160,99,.18)}}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
 </style>
@@ -152,17 +163,21 @@ body.locked{overflow:hidden}
 <main class="page">
 
   <!-- 1. Герой -->
-  <section class="hero" data-stop data-hold="3000">
+  <section class="hero">
+    <div data-stop data-hold="3000">
     <img class="mono reveal" src="img/monogram.png" alt="Н · А">
     <p class="top reveal">Чакыруу<small>Үйлөнүү тою</small></p>
     <img class="hands reveal" src="img/hands.webp" alt="Чакыруу конверти">
+    </div>
+    <div data-stop data-hold="3000">
     <h2 class="script names reveal"><span data-groom></span><span class="amp">&amp;</span><span data-bride></span></h2>
     <p class="date reveal">19 · 12 · 2026</p>
     <p class="lead reveal"><b>Бактылуу күн</b>Эки жүрөк бир үй-бүлө болуп,<br>жаңы турмушка кадам таштайт</p>
+    </div>
   </section>
 
   <!-- 2. Приглашение + день недели -->
-  <section class="invite-wrap" data-stop data-hold="3000">
+  <section class="invite-wrap">
     <div class="invite reveal">
       <svg class="invite-top" viewBox="0 0 340 72" aria-hidden="true">
         <path fill="var(--cream)" d="M0 73 V36 A14 14 0 0 0 14 22 H112 C134 22 142 0 170 0 C198 0 206 22 228 22 H326 A14 14 0 0 0 340 36 V73 Z"/>
@@ -170,9 +185,12 @@ body.locked{overflow:hidden}
         <g transform="translate(170 27) scale(.42)" fill="none" stroke="#a9805f" stroke-width="3" stroke-linecap="round"><path d="M0 14 V3 C0 -7 13 -12 17 -4 C20 2 13 6 10 2 C8 -1 11 -3 12.5 -1"/><path d="M0 14 V3 C0 -7 -13 -12 -17 -4 C-20 2 -13 6 -10 2 C-8 -1 -11 -3 -12.5 -1"/></g>
       </svg>
       <div class="paper invite-body">
+      <div data-stop data-hold="3000">
       <h2 class="script" id="greet">Урматтуу туугандар<br>жана достор!</h2>
       <p>Сиздерди <strong data-groom></strong> менен <strong data-bride></strong>дин үйлөнүү тоюна арналган салтанаттуу кечеге чакырабыз!</p>
       <p class="note">Кубанычыбызды бирге бөлүшүңүздөр</p>
+      </div>
+      <div data-stop data-hold="3000">
       <div class="week reveal" id="week">
         <span class="wd">Дш</span><span class="wd">Шш</span><span class="wd">Шр</span><span class="wd">Бш</span><span class="wd">Жм</span><span class="wd">Иш</span><span class="wd">Жк</span>
         <span class="d">14</span><span class="d">15</span><span class="d">16</span><span class="d">17</span><span class="d">18</span>
@@ -181,6 +199,7 @@ body.locked{overflow:hidden}
       </div>
       <p class="script month">Декабрь</p>
       <p class="weekday">19-декабрь, ишемби</p>
+      </div>
       </div>
     </div>
     <img class="silk" src="img/silk.webp" alt="">
@@ -199,7 +218,7 @@ body.locked{overflow:hidden}
   </section>
 
   <!-- 4. Время и место -->
-  <section class="venue-wrap" data-stop data-hold="3000">
+  <section class="venue-wrap" data-stop data-hold="3000" data-center=".venue">
     <img class="seal" src="img/seal.png" alt="">
     <div class="paper venue reveal">
       <h2 class="script">Башталышы</h2>
@@ -217,14 +236,19 @@ body.locked{overflow:hidden}
   </section>
 
   <!-- 5. Той ээлери -->
-  <section class="hosts" data-stop data-hold="0">
+  <section class="hosts">
     <img class="silk" src="img/silk.webp" alt="" style="margin:-10px -25% 30px;transform:scaleY(-1)">
+    <div data-stop data-hold="3000">
     <h2 class="script reveal">Той ээлери</h2>
     <p class="script who reveal" data-hosts></p>
     <p class="reveal">Сиздерди тойдо күтөбүз!</p>
+    </div>
+    <div data-stop data-hold="0">
     <img class="bouquet small reveal" src="img/bouquet.webp" alt="">
     <img class="mono reveal" src="img/monogram.png" alt="Н · А" style="margin-top:34px">
     <button class="replay" id="replay">↺ Кайра көрүү</button>
+    <a class="btn btn-line pdf-only" href="https://kumanurmatov.github.io/toy/" style="color:var(--on-velvet);border-color:rgba(243,230,211,.5);margin:26px auto 60px">Онлайн чакырууну ачуу</a>
+    </div>
   </section>
 </main>
 
@@ -310,6 +334,7 @@ const se = document.scrollingElement;
 let idx = 0, timer = null, anim = null, auto = false, idle = null;
 
 function targetOf(el){
+  if (el.dataset.center) el = el.querySelector(el.dataset.center);
   const r = el.getBoundingClientRect(), top = r.top + se.scrollTop, vh = innerHeight;
   const y = r.height < vh ? top + r.height/2 - vh/2 : top - 10;
   return Math.max(0, Math.min(y, se.scrollHeight - vh));
@@ -347,12 +372,29 @@ const music = $('#music'), mute = $('#mute');
 $('#openBtn').addEventListener('click', () => {
   $('#cover').classList.add('gone'); document.body.classList.remove('locked');
   music.volume = .6; music.play().then(() => mute.classList.remove('hidden')).catch(() => {});
-  auto = true; se.scrollTop = 0;
-  timer = setTimeout(() => go(1), +stops[0].dataset.hold + 800);
+  auto = true; setTimeout(() => go(0), 900);
 });
-$('#replay').addEventListener('click', () => { auto = true; go(0); clearTimeout(timer); timer = setTimeout(() => go(1), 3000); });
+$('#replay').addEventListener('click', () => { auto = true; go(0); });
 mute.addEventListener('click', () => { music.muted = !music.muted; $('#waves').style.opacity = music.muted ? .15 : 1; });
 document.addEventListener('visibilitychange', () => { if (document.hidden) music.pause(); else if (auto && !music.muted) music.play().catch(()=>{}); });
+
+// ===== PDF-режим: ?pdf =====
+const PDF = new URLSearchParams(location.search).has('pdf');
+if (PDF) {
+  document.body.classList.add('pdf'); document.body.classList.remove('locked');
+  document.querySelectorAll('.reveal,.week').forEach(e => e.classList.add('in'));
+  $('#yaBtn').href = `https://yandex.ru/maps/?rtext=~${CFG.lat}%2C${CFG.lon}&rtt=auto`;
+  const s0 = new Date(CFG.date), e0 = new Date(s0.getTime()+CFG.durationHours*3600e3);
+  const f = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  $('#calBtn').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(`${CFG.groom} & ${CFG.bride} · Үйлөнүү тою`)+
+    '&dates='+f(s0)+'/'+f(e0)+'&location='+encodeURIComponent(`${CFG.venue}, ${CFG.address}`);
+  $('#calBtn').removeAttribute('download');
+  Promise.all([document.fonts.ready, ...[...document.images].map(i => i.complete ? 0 : new Promise(r => i.onload = i.onerror = r))]).then(() => {
+    const h = Math.ceil($('.page').getBoundingClientRect().height);
+    const st = document.createElement('style'); st.textContent = `@page{size:480px ${h}px;margin:0}`; document.head.appendChild(st);
+    document.body.dataset.ready = h;
+  });
+}
 </script>
 </body>
 </html>
