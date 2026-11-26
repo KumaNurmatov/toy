@@ -272,6 +272,7 @@ body.pdf .invite-wrap .silk{margin-bottom:10px}
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
 </button>
 <audio id="music" src="music.mp3" loop preload="auto"></audio>
+<audio id="voice" src="voice.mp3" preload="auto"></audio>
 
 <script>
 /* ======= ДАННЫЕ — правьте здесь ======= */
@@ -459,15 +460,20 @@ function go(i){
     if (!NO_ANIM) play(el);
     const base = +el.dataset.hold, left = (el._end || 0) - performance.now();
     const hold = base > 0 ? Math.max(base, left + 700) : 0;
+    if (voiceMode) return;   // дальше ведёт голос
     if (auto && hold > 0 && i < stops.length-1) timer = setTimeout(() => go(i+1), hold);
     else { window.driving = false; playVisible(); }
   });
 }
-function pauseByUser(){
+function pauseByUser(e){
   if (!auto) return;
+  if (e && e.target && e.target.closest && e.target.closest('button, a')) return;
+  followPaused = true;
   cancelAnimationFrame(anim); clearTimeout(timer); clearTimeout(idle);
   window.driving = false; playVisible();
-  idle = setTimeout(() => { // через 7 с тишины продолжаем с ближайшего блока ниже
+  idle = setTimeout(() => { // через 7 с тишины продолжаем
+    followPaused = false;
+    if (voiceMode && !voice.ended) { go(cueIndex()); return; }   // догоняем голос
     const y = se.scrollTop + innerHeight*0.4;
     let n = stops.findIndex(s => s.getBoundingClientRect().top + se.scrollTop > y);
     if (n === -1) return; go(n);
@@ -475,40 +481,72 @@ function pauseByUser(){
 }
 ['wheel','touchstart','keydown'].forEach(ev => addEventListener(ev, pauseByUser, {passive:true}));
 
-const music = $('#music'), mute = $('#mute');
-// музыка: по кнопке, громкость плавно растёт 0 → 0.55 за 4 с (Web Audio — на iPhone audio.volume не работает)
-const VOL = 0.55, FADE = 4;
-let actx = null, gain = null, muted = false;
-function startMusic(){
+const music = $('#music'), voice = $('#voice'), mute = $('#mute');
+// ===== звук: музыка + озвучка (Web Audio — на iPhone audio.volume не работает) =====
+const VOL = 0.55, VOL_UNDER = 0.2, FADE = 4;
+// начало каждой фразы в voice.mp3 (с) → блок прокрутки
+const CUES = [1.13, 5.31, 9.93, 15.24, 19.14, 23.36, 27.93, 32.26], LEAD = 0.5;
+let actx = null, mGain = null, master = null, muted = false, voiceMode = false, followPaused = false, cueLoop = null;
+function initAudio(){
   try {
     if (!actx) {
       const AC = window.AudioContext || window.webkitAudioContext;
-      actx = new AC(); gain = actx.createGain(); gain.gain.value = 0.0001;
-      actx.createMediaElementSource(music).connect(gain).connect(actx.destination);
+      actx = new AC(); master = actx.createGain(); master.connect(actx.destination);
+      mGain = actx.createGain(); mGain.gain.value = 0.0001; mGain.connect(master);
+      actx.createMediaElementSource(music).connect(mGain);
+      actx.createMediaElementSource(voice).connect(master);
     }
     actx.resume();
-  } catch (e) { actx = gain = null; }
-  music.currentTime = 0;
-  if (!gain) music.volume = 0;
-  music.play().then(() => {
-    mute.classList.remove('hidden');
-    if (gain) { const t = actx.currentTime, c = new Float32Array(64).map((_, i) => VOL * Math.pow(i/63, 2)); gain.gain.cancelScheduledValues(t); gain.gain.setValueCurveAtTime(c, t, FADE); }
-    else { const t0 = performance.now(); (function up(){ const k = Math.min(1,(performance.now()-t0)/(FADE*1000)); music.volume = VOL*k*k; if (k<1) requestAnimationFrame(up); })(); }
-  }).catch(() => {});
+  } catch (e) { actx = mGain = master = null; }
+}
+function rampMusic(to, sec, curve){
+  if (mGain) {
+    const t = actx.currentTime, from = Math.max(mGain.gain.value, 0.0001);
+    mGain.gain.cancelScheduledValues(t);
+    if (curve) mGain.gain.setValueCurveAtTime(new Float32Array(48).map((_, i) => from + (to - from) * Math.pow(i/47, 2)), t, sec);
+    else { mGain.gain.setValueAtTime(from, t); mGain.gain.linearRampToValueAtTime(to, t + sec); }
+  } else {
+    const v0 = music.volume, t0 = performance.now();
+    (function up(){ const k = Math.min(1,(performance.now()-t0)/(sec*1000)); music.volume = v0 + (to-v0)*k; if (k<1) requestAnimationFrame(up); })();
+  }
+}
+const cueIndex = () => { const t = voice.currentTime; let n = 0; CUES.forEach((c,i) => { if (t >= c - LEAD) n = i; }); return n; };
+function followVoice(){
+  clearInterval(cueLoop);
+  cueLoop = setInterval(() => {
+    if (!voiceMode || followPaused || voice.paused) return;
+    const n = cueIndex(); if (n !== idx) go(n);
+  }, 100);
+}
+voice.addEventListener('ended', () => { rampMusic(VOL, 2.5); });   // голос закончился — музыка возвращается
+function startShow(){
+  initAudio();
+  music.currentTime = 0; voice.currentTime = 0;
+  if (!mGain) music.volume = 0;
+  music.play().then(() => mute.classList.remove('hidden')).catch(() => {});
+  auto = true; idx = -1; followPaused = false;
+  voice.play().then(() => {
+    voiceMode = true; rampMusic(VOL_UNDER, 1.2, true); followVoice();
+  }).catch(() => {                                                    // без голоса — как раньше
+    voiceMode = false; rampMusic(VOL, FADE, true); setTimeout(() => go(0), 900);
+  });
 }
 function setMuted(m){
   muted = m; $('#waves').style.opacity = m ? .15 : 1;
-  if (gain) { const t = actx.currentTime; gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(Math.max(gain.gain.value,0.0001), t); gain.gain.exponentialRampToValueAtTime(m ? 0.0001 : VOL, t + .5); }
-  else music.muted = m;
+  if (master) { const t = actx.currentTime; master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(Math.max(master.gain.value,0.0001), t); master.gain.exponentialRampToValueAtTime(m ? 0.0001 : 1, t + .5); }
+  else { music.muted = voice.muted = m; }
 }
 $('#openBtn').addEventListener('click', () => {
   $('#cover').classList.add('gone'); document.body.classList.remove('locked'); $('#prog').classList.add('on');
-  startMusic();
-  auto = true; setTimeout(() => go(0), 900);
+  startShow();
 });
-$('#replay').addEventListener('click', () => { auto = true; if (muted) setMuted(false); startMusic(); go(0); });
+$('#replay').addEventListener('click', () => { if (muted) setMuted(false); voice.pause(); startShow(); });
 mute.addEventListener('click', () => setMuted(!muted));
-document.addEventListener('visibilitychange', () => { if (document.hidden) music.pause(); else if (auto && !muted) { actx && actx.resume(); music.play().catch(()=>{}); } });
+let wasVoice = false;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { wasVoice = !voice.paused && !voice.ended; music.pause(); voice.pause(); }
+  else if (auto) { actx && actx.resume(); music.play().catch(()=>{}); if (wasVoice) voice.play().catch(()=>{}); }
+});
 
 // ===== PDF-режим: ?pdf =====
 const PDF = new URLSearchParams(location.search).has('pdf');
