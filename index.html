@@ -403,6 +403,7 @@ function prepare(root){
 function play(root){
   if (root._played) return; root._played = true;
   let a = root.parentElement; while (a) { if (a.classList && a.classList.contains('reveal')) a.classList.add('in'); a = a.parentElement; }
+  root.querySelectorAll('.reveal').forEach(c => c.classList.add('in'));   // карточки внутри блока
   if (!root._items) return;
   let t = 0, end = 0;
   root._items.forEach(it => { setTimeout(() => it.el.classList.add('on'), t); end = Math.max(end, t + it.d); t += it.gap; });
