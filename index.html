@@ -50,7 +50,7 @@ body.locked{overflow:hidden}
 .hero{padding:56px 24px 40px;text-align:center}
 .hero .top{font-family:"Great Vibes",cursive;font-size:40px;color:var(--on-velvet)}
 .hero .top small{display:block;font-family:Montserrat;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--on-velvet-soft);margin-top:2px}
-.hands{display:block;width:118%;margin:22px -9% 6px;-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 99%);mask-image:linear-gradient(180deg,#000 72%,transparent 99%);filter:drop-shadow(0 26px 30px rgba(20,0,5,.45))}
+.hands{display:block;width:118%;margin:22px -9% 6px;-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 99%);mask-image:linear-gradient(180deg,#000 72%,transparent 99%)}
 .names{font-size:64px;color:var(--on-velvet);margin-top:4px}
 .names .amp{display:block;font-size:44px;color:var(--gold);margin:-4px 0 -2px}
 .date{font-family:"Cormorant Garamond",serif;font-size:22px;letter-spacing:.3em;color:var(--gold);margin:18px 0 22px}
@@ -64,7 +64,10 @@ body.locked{overflow:hidden}
 
 /* 2. ПРИГЛАШЕНИЕ */
 .invite-wrap{padding:30px 22px 0;position:relative}
-.invite{border-radius:170px 170px 6px 6px / 90px 90px 6px 6px;padding:62px 30px 96px;text-align:center}
+.invite{text-align:center}
+.invite-top{display:block;width:100%;height:auto;margin-bottom:-1px}
+.invite-body{border-radius:0 0 4px 4px;padding:10px 30px 96px;background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 45%,var(--cream-2) 100%)}
+.invite-body::after{inset:-1px 8.4px 9px 8.4px;border-top:0;border-color:rgba(160,110,80,.5)}
 .invite h2{font-size:42px;color:var(--ink);margin-bottom:18px}
 .invite p{font-size:15px;line-height:1.75;color:var(--ink-soft)}
 .invite p strong{color:var(--ink);font-weight:600}
@@ -81,7 +84,7 @@ body.locked{overflow:hidden}
 .month{font-size:40px;color:var(--ink);text-align:right;margin-top:2px;padding-right:6px}
 .weekday{font-family:"Cormorant Garamond",serif;font-size:21px;color:var(--ink);margin-top:2px}
 
-.silk{display:block;width:150%;margin:-78px -25% -40px;position:relative;z-index:3;pointer-events:none;filter:drop-shadow(0 18px 22px rgba(20,0,5,.5))}
+.silk{display:block;width:150%;margin:-78px -25% -40px;position:relative;z-index:3;pointer-events:none}
 
 /* 3. ОТСЧЁТ */
 .countdown{padding:88px 24px 70px;text-align:center}
@@ -95,7 +98,7 @@ body.locked{overflow:hidden}
 /* 4. МЕСТО */
 .venue-wrap{padding:40px 36px 0;position:relative}
 .venue{border-radius:4px;padding:64px 26px 40px;text-align:center}
-.seal{position:absolute;left:50%;top:0;width:86px;height:86px;transform:translate(-50%,0);z-index:2;filter:drop-shadow(0 6px 8px rgba(40,10,0,.35))}
+.seal{position:absolute;left:50%;top:0;width:86px;height:86px;transform:translate(-50%,0);z-index:2}
 .venue h2{font-size:40px;color:var(--ink)}
 .venue .time{font-family:"Cormorant Garamond",serif;font-size:58px;line-height:1;color:var(--ink);margin:8px 0 18px}
 .venue .label{font-size:12px;color:var(--ink-soft);letter-spacing:.04em}
@@ -106,7 +109,7 @@ body.locked{overflow:hidden}
 .btn svg{width:16px;height:16px;flex:none}
 .btn-wine{background:var(--wine);color:#f8ecdc}
 .btn-line{background:transparent;color:var(--ink);border:1px solid rgba(107,20,36,.45);margin-top:10px}
-.bouquet{display:block;width:112%;margin:-30px -6% 0;position:relative;z-index:2;filter:drop-shadow(0 18px 22px rgba(20,0,5,.45))}
+.bouquet{display:block;width:112%;margin:-30px -6% 0;position:relative;z-index:2}
 
 /* 5. ХОЗЯЕВА */
 .hosts{padding:30px 24px 30px;text-align:center}
@@ -120,7 +123,7 @@ body.locked{overflow:hidden}
 .cover{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;
   background:radial-gradient(90% 60% at 50% 40%,#5e1020 0%,#3a0710 70%,#2a040b 100%);transition:opacity 1.2s ease,visibility 0s 1.2s}
 .cover.gone{opacity:0;visibility:hidden}
-.cover .mono-cover{width:170px;height:170px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));animation:float 4s ease-in-out infinite}
+.cover .mono-cover{width:170px;height:170px;animation:float 4s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-6px)}}
 .cover .names{font-size:58px;margin:22px 0 6px}
 .cover .date{margin:6px 0 34px}
@@ -160,7 +163,13 @@ body.locked{overflow:hidden}
 
   <!-- 2. Приглашение + день недели -->
   <section class="invite-wrap" data-stop data-hold="3000">
-    <div class="paper invite reveal">
+    <div class="invite reveal">
+      <svg class="invite-top" viewBox="0 0 340 72" aria-hidden="true">
+        <path fill="var(--cream)" d="M0 73 V36 A14 14 0 0 0 14 22 H112 C134 22 142 0 170 0 C198 0 206 22 228 22 H326 A14 14 0 0 0 340 36 V73 Z"/>
+        <path fill="none" stroke="rgba(160,110,80,.5)" stroke-width="1" d="M8.5 73 V42.5 A22 22 0 0 0 20.5 30 H113 C135 30 144 8.5 170 8.5 C196 8.5 205 30 227 30 H319.5 A22 22 0 0 0 331.5 42.5 V73"/>
+        <g transform="translate(170 27) scale(.42)" fill="none" stroke="#a9805f" stroke-width="3" stroke-linecap="round"><path d="M0 14 V3 C0 -7 13 -12 17 -4 C20 2 13 6 10 2 C8 -1 11 -3 12.5 -1"/><path d="M0 14 V3 C0 -7 -13 -12 -17 -4 C-20 2 -13 6 -10 2 C-8 -1 -11 -3 -12.5 -1"/></g>
+      </svg>
+      <div class="paper invite-body">
       <h2 class="script" id="greet">Урматтуу туугандар<br>жана достор!</h2>
       <p>Сиздерди <strong data-groom></strong> менен <strong data-bride></strong>дин үйлөнүү тоюна арналган салтанаттуу кечеге чакырабыз!</p>
       <p class="note">Кубанычыбызды бирге бөлүшүңүздөр</p>
@@ -172,6 +181,7 @@ body.locked{overflow:hidden}
       </div>
       <p class="script month">Декабрь</p>
       <p class="weekday">19-декабрь, ишемби</p>
+      </div>
     </div>
     <img class="silk" src="img/silk.webp" alt="">
   </section>
