@@ -27,14 +27,12 @@ body{background:var(--velvet-d);color:var(--on-velvet);font-family:Montserrat,sy
 body.locked{overflow:hidden}
 
 /* бархат */
-.page{position:relative;max-width:480px;margin:0 auto;overflow:hidden;
-  background:
-    radial-gradient(90% 40% at 30% 8%, rgba(140,30,50,.55), transparent 70%),
-    radial-gradient(80% 35% at 75% 45%, rgba(120,22,40,.45), transparent 70%),
-    radial-gradient(90% 40% at 25% 85%, rgba(130,26,46,.5), transparent 70%),
-    linear-gradient(180deg,#520d19 0%,#3f0811 50%,#4c0c17 100%)}
-.page::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .1 0 0 0 0 .15 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.page{position:relative;max-width:480px;margin:0 auto;overflow:hidden;background-color:#540e1c;
+  background-image:
+    radial-gradient(120% 60% at 50% 0%, rgba(255,120,140,.06), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,0) 30%, rgba(0,0,0,.12)),
+    url("img/velvet.jpg");
+  background-size:auto,auto,620px 620px;background-repeat:no-repeat,no-repeat,repeat}
 .page > *{position:relative}
 
 .script{font-family:"Great Vibes",cursive;font-weight:400;line-height:1.05}
@@ -50,7 +48,7 @@ body.locked{overflow:hidden}
 .hero{padding:56px 24px 40px;text-align:center}
 .hero .top{font-family:"Great Vibes",cursive;font-size:40px;color:var(--on-velvet)}
 .hero .top small{display:block;font-family:Montserrat;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--on-velvet-soft);margin-top:2px}
-.hands{display:block;width:118%;margin:22px -9% 6px;-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 99%);mask-image:linear-gradient(180deg,#000 72%,transparent 99%)}
+.hands{display:block;width:calc(100% + 48px);max-width:none;margin:18px -24px 4px}
 .names{font-size:64px;color:var(--on-velvet);margin-top:4px}
 .names .amp{display:block;font-size:44px;color:var(--gold);margin:-4px 0 -2px}
 .date{font-family:"Cormorant Garamond",serif;font-size:22px;letter-spacing:.3em;color:var(--gold);margin:18px 0 22px}
@@ -121,7 +119,7 @@ body.locked{overflow:hidden}
 
 /* ОБЛОЖКА */
 .cover{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;
-  background:radial-gradient(90% 60% at 50% 40%,#5e1020 0%,#3a0710 70%,#2a040b 100%);transition:opacity 1.2s ease,visibility 0s 1.2s}
+  background:radial-gradient(90% 60% at 50% 42%,rgba(255,110,130,.08),rgba(0,0,0,.25) 100%),url("img/velvet.jpg") center/620px 620px #540e1c;transition:opacity 1.2s ease,visibility 0s 1.2s}
 .cover.gone{opacity:0;visibility:hidden}
 .cover .mono-cover{width:170px;height:170px;animation:float 4s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-6px)}}
