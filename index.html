@@ -476,14 +476,39 @@ function pauseByUser(){
 ['wheel','touchstart','keydown'].forEach(ev => addEventListener(ev, pauseByUser, {passive:true}));
 
 const music = $('#music'), mute = $('#mute');
+// музыка: по кнопке, громкость плавно растёт 0 → 0.85 за 4 с (Web Audio — на iPhone audio.volume не работает)
+const VOL = 0.85, FADE = 4;
+let actx = null, gain = null, muted = false;
+function startMusic(){
+  try {
+    if (!actx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      actx = new AC(); gain = actx.createGain(); gain.gain.value = 0.0001;
+      actx.createMediaElementSource(music).connect(gain).connect(actx.destination);
+    }
+    actx.resume();
+  } catch (e) { actx = gain = null; }
+  music.currentTime = 0;
+  if (!gain) music.volume = 0;
+  music.play().then(() => {
+    mute.classList.remove('hidden');
+    if (gain) { const t = actx.currentTime, c = new Float32Array(64).map((_, i) => VOL * Math.pow(i/63, 2)); gain.gain.cancelScheduledValues(t); gain.gain.setValueCurveAtTime(c, t, FADE); }
+    else { const t0 = performance.now(); (function up(){ const k = Math.min(1,(performance.now()-t0)/(FADE*1000)); music.volume = VOL*k*k; if (k<1) requestAnimationFrame(up); })(); }
+  }).catch(() => {});
+}
+function setMuted(m){
+  muted = m; $('#waves').style.opacity = m ? .15 : 1;
+  if (gain) { const t = actx.currentTime; gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(Math.max(gain.gain.value,0.0001), t); gain.gain.exponentialRampToValueAtTime(m ? 0.0001 : VOL, t + .5); }
+  else music.muted = m;
+}
 $('#openBtn').addEventListener('click', () => {
   $('#cover').classList.add('gone'); document.body.classList.remove('locked'); $('#prog').classList.add('on');
-  music.volume = .6; music.play().then(() => mute.classList.remove('hidden')).catch(() => {});
+  startMusic();
   auto = true; setTimeout(() => go(0), 900);
 });
 $('#replay').addEventListener('click', () => { auto = true; go(0); });
-mute.addEventListener('click', () => { music.muted = !music.muted; $('#waves').style.opacity = music.muted ? .15 : 1; });
-document.addEventListener('visibilitychange', () => { if (document.hidden) music.pause(); else if (auto && !music.muted) music.play().catch(()=>{}); });
+mute.addEventListener('click', () => setMuted(!muted));
+document.addEventListener('visibilitychange', () => { if (document.hidden) music.pause(); else if (auto && !muted) { actx && actx.resume(); music.play().catch(()=>{}); } });
 
 // ===== PDF-режим: ?pdf =====
 const PDF = new URLSearchParams(location.search).has('pdf');
