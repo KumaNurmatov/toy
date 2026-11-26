@@ -108,6 +108,7 @@ body.locked{overflow:hidden}
 .cd b{display:block;font-family:"Cormorant Garamond",serif;font-weight:500;font-size:38px;line-height:1;color:var(--on-velvet)}
 .cd small{display:block;margin-top:6px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--on-velvet-soft)}
 .countdown p{font-size:14px;line-height:1.75;color:var(--on-velvet-soft)}
+.countdown .cd-note{font-size:clamp(13px,4vw,17px);white-space:nowrap}
 
 /* 4. МЕСТО */
 .venue-wrap{padding:40px 36px 0;position:relative}
@@ -230,7 +231,7 @@ body.pdf .invite-wrap .silk{margin-bottom:10px}
       <div><b id="cdM">00</b><small>мүнөт</small></div>
       <div><b id="cdS">00</b><small>секунд</small></div>
     </div>
-    <p class="reveal">Ошол күнү сиздерди<br>чыдамсыздык менен күтөбүз</p>
+    <p class="reveal cd-note">Сиздерди чыдамсыздык менен күтөбүз</p>
   </section>
 
   <!-- 4. Время и место -->
@@ -329,7 +330,7 @@ function fixA(root){
     n.replaceWith(frag);
   });
 }
-document.querySelectorAll('.script, .cover .names').forEach(fixA);
+document.querySelectorAll('.script, .cover .names, .venue .place').forEach(fixA);
 
 // отсчёт
 function tick(){
@@ -483,7 +484,7 @@ function pauseByUser(e){
 
 const music = $('#music'), voice = $('#voice'), mute = $('#mute');
 // ===== звук: музыка + озвучка (Web Audio — на iPhone audio.volume не работает) =====
-const VOL = 0.55, VOL_UNDER = 0.2, FADE = 4;
+const VOL = 0.47, VOL_UNDER = 0.17, FADE = 4;
 // начало каждой фразы в voice.mp3 (с) → блок прокрутки
 const CUES = [1.13, 5.31, 9.93, 15.24, 19.14, 23.36, 27.93, 32.26], LEAD = 0.5;
 let actx = null, mGain = null, master = null, muted = false, voiceMode = false, followPaused = false, cueLoop = null;
